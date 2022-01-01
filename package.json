@@ -1,0 +1,26 @@
+{
+  "name": "protobuf-json-comparison",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.mjs",
+  "scripts": {
+    "start": "node src/index.mjs",
+    "dev": "nodemon --watch ./src --ext mjs --exec npm start",
+    "fetch": "node src/client.mjs"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "compression": "^1.7.4",
+    "express": "^4.17.2",
+    "node-fetch": "^3.1.0",
+    "protobufjs": "^6.11.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.6.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "nodemon": "^2.0.15",
+    "prettier": "^2.5.1"
+  }
+}

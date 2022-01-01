@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+package test;
+
+message TextMessage {
+  repeated Text foo = 1;
+}
+
+message Text {
+  string bar_bar_bar = 1;
+  string baz_baz_baz = 2;
+  string bax_bax_bax = 3;
+  string bac_bac_bac = 4;
+  string bav_bav_bav = 5;
+  string bab_bab_bab = 6;
+  string ban_ban_ban = 7;
+  string bam_bam_bam = 8;
+  string baa_baa_baa = 9;
+  string bas_bas_bas = 10;
+}
+
+message Number32Message {
+  repeated Number32 foo = 1;
+}
+
+message Number32 {
+  sint32 bar_bar_bar = 1;
+  sint32 baz_baz_baz = 2;
+  sint32 bax_bax_bax = 3;
+  sint32 bac_bac_bac = 4;
+  sint32 bav_bav_bav = 5;
+  sint32 bab_bab_bab = 6;
+  sint32 ban_ban_ban = 7;
+  sint32 bam_bam_bam = 8;
+  sint32 baa_baa_baa = 9;
+  sint32 bas_bas_bas = 10;
+}
+
+message Number64Message {
+  repeated Number64 foo = 1;
+}
+
+message Number64 {
+  sint64 bar_bar_bar = 1;
+  sint64 baz_baz_baz = 2;
+  sint64 bax_bax_bax = 3;
+  sint64 bac_bac_bac = 4;
+  sint64 bav_bav_bav = 5;
+  sint64 bab_bab_bab = 6;
+  sint64 ban_ban_ban = 7;
+  sint64 bam_bam_bam = 8;
+  sint64 baa_baa_baa = 9;
+  sint64 bas_bas_bas = 10;
+}
+
+message NumberFootgunMessage {
+  repeated NumberFootgun foo = 1;
+}
+
+message NumberFootgun {
+  int64 bar_bar_bar = 1;
+  int64 baz_baz_baz = 2;
+  int64 bax_bax_bax = 3;
+  int64 bac_bac_bac = 4;
+  int64 bav_bav_bav = 5;
+  int64 bab_bab_bab = 6;
+  int64 ban_ban_ban = 7;
+  int64 bam_bam_bam = 8;
+  int64 baa_baa_baa = 9;
+  int64 bas_bas_bas = 10;
+}
