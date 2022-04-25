@@ -91,7 +91,7 @@ export const generateJson = async () => {
   await fs.writeFile("data_number_32.json", JSON.stringify(number32Output));
 
   const number53Output = { foo: [] };
-  max = Math.pow(2, 53);
+  max = Number.MAX_SAFE_INTEGER;
   min = -1 * max - 1;
 
   for (let i = 0; i < 10 * 400; i++) {
