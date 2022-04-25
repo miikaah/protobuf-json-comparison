@@ -51,7 +51,7 @@ export const generateJson = async () => {
   await fs.writeFile("data_text_plain.json", JSON.stringify(plainOutput));
 
   const number16Output = { foo: [] };
-  let max = Math.pow(2, 16);
+  let max = Math.pow(2, 16) - 1;
   let min = -1 * max - 1;
 
   for (let i = 0; i < 10 * 400; i++) {
@@ -71,7 +71,7 @@ export const generateJson = async () => {
   await fs.writeFile("data_number_16.json", JSON.stringify(number16Output));
 
   const number32Output = { foo: [] };
-  max = Math.pow(2, 32);
+  max = Math.pow(2, 32) - 1;
   min = -1 * max - 1;
 
   for (let i = 0; i < 10 * 400; i++) {
