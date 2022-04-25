@@ -3,7 +3,8 @@ import express from "express";
 import fs from "fs/promises";
 import { constants } from "fs";
 import { generateJson } from "./data-gen.mjs";
-import protobuf from "protobufjs";
+import protobufjs from "protobufjs";
+import { gzipSync } from "zlib";
 
 const file = "data_text.json";
 const filePlain = "data_text_plain.json";
@@ -22,20 +23,28 @@ let numberData16;
 let numberData32;
 let numberData53;
 app.get("/text", (req, res) => {
-  res.json(data);
+  writeResponse(res, data);
 });
 app.get("/text-plain", (req, res) => {
-  res.json(dataPlain);
+  writeResponse(res, dataPlain);
 });
 app.get("/number-16", (req, res) => {
-  res.json(numberData16);
+  writeResponse(res, numberData16);
 });
 app.get("/number-32", (req, res) => {
-  res.json(numberData32);
+  writeResponse(res, numberData32);
 });
 app.get("/number-53", (req, res) => {
-  res.json(numberData53);
+  writeResponse(res, numberData53);
 });
+
+const writeResponse = (res, data) => {
+  res.writeHead(200, {
+    "Content-Encoding": "gzip",
+  });
+  res.write(gzipSync(JSON.stringify(data)));
+  res.end();
+};
 
 let protobuffer;
 let protobuffer16;
@@ -43,43 +52,32 @@ let protobuffer32;
 let protobuffer53;
 let protobufferFootgun;
 app.get("/protobuf", (req, res) => {
-  res.writeHead(200, {
-    "Content-Type": "application/octet-stream",
-  });
-  res.write(protobuffer);
-  res.end();
+  writePbResponse(res, protobuffer);
 });
 app.get("/protobuf-16", (req, res) => {
-  res.writeHead(200, {
-    "Content-Type": "application/octet-stream",
-  });
-  res.write(protobuffer16);
-  res.end();
+  writePbResponse(res, protobuffer16);
 });
 app.get("/protobuf-32", (req, res) => {
-  res.writeHead(200, {
-    "Content-Type": "application/octet-stream",
-  });
-  res.write(protobuffer32);
-  res.end();
+  writePbResponse(res, protobuffer32);
 });
 app.get("/protobuf-53", (req, res) => {
-  res.writeHead(200, {
-    "Content-Type": "application/octet-stream",
-  });
-  res.write(protobuffer53);
-  res.end();
+  writePbResponse(res, protobuffer53);
 });
 app.get("/protobuf-footgun", (req, res) => {
-  res.writeHead(200, {
-    "Content-Type": "application/octet-stream",
-  });
-  res.write(protobufferFootgun);
-  res.end();
+  writePbResponse(res, protobufferFootgun);
 });
 
+const writePbResponse = (res, pb) => {
+  res.writeHead(200, {
+    "Content-Type": "application/octet-stream",
+    "Content-Encoding": "gzip",
+  });
+  res.write(gzipSync(pb));
+  res.end();
+};
+
 const createNumberMessage = async (numberData, scalar = "32") => {
-  const root = await protobuf.load("test.proto").catch(console.error);
+  const root = await protobufjs.load("test.proto").catch(console.error);
   const NumberMessage = root.lookupType(`test.Number${scalar}Message`);
 
   const errMsg = NumberMessage.verify(numberData);
@@ -104,7 +102,7 @@ app.listen(port, async () => {
       numberData53 = JSON.parse(await fs.readFile(fileNumber53, "utf-8"));
     });
 
-  const root = await protobuf.load("test.proto").catch(console.error);
+  const root = await protobufjs.load("test.proto").catch(console.error);
   const TextMessage = root.lookupType("test.TextMessage");
 
   const errMsg = TextMessage.verify(data);

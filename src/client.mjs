@@ -1,20 +1,9 @@
 import fetch from "node-fetch";
-import { deflate } from "zlib";
+import { gunzipSync } from "zlib";
+import { strict as assert } from "assert";
+import protobufjs from "protobufjs";
 
 const baseUrl = "http://localhost:4200";
-
-const compress = async (input) => {
-  return new Promise((resolve, reject) => {
-    deflate(input, (err, buffer) => {
-      if (err) {
-        console.error(err);
-        reject();
-      }
-
-      resolve(Buffer.byteLength(buffer));
-    });
-  });
-};
 
 async function main() {
   const jsonResponse = await fetch(`${baseUrl}/text`, {
@@ -22,11 +11,10 @@ async function main() {
   });
   console.log("Text JSON");
   console.log("--------------------------");
-  console.log("Transferred bytes", jsonResponse.headers.get("content-length"));
-  const text = await jsonResponse.text();
-
-  const textByteLength = await compress(text);
-  console.log("Compressed bytes ", textByteLength);
+  const json = await jsonResponse.arrayBuffer();
+  const jsonByteLength = Buffer.byteLength(json);
+  console.log("Transferred bytes ", jsonByteLength);
+  console.log("Uncompressed bytes", Buffer.byteLength(gunzipSync(json)));
   console.log("--------------------------\n");
 
   const jsonPlainResponse = await fetch(`${baseUrl}/text-plain`, {
@@ -34,14 +22,10 @@ async function main() {
   });
   console.log("Text JSON with plain object keys");
   console.log("--------------------------");
-  console.log(
-    "Transferred bytes",
-    jsonPlainResponse.headers.get("content-length")
-  );
-  const textPlain = await jsonPlainResponse.text();
-
-  const textPlainByteLength = await compress(textPlain);
-  console.log("Compressed bytes ", textPlainByteLength);
+  const jsonPlain = await jsonPlainResponse.arrayBuffer();
+  const jsonPlainByteLength = Buffer.byteLength(jsonPlain);
+  console.log("Transferred bytes ", jsonPlainByteLength);
+  console.log("Uncompressed bytes", Buffer.byteLength(gunzipSync(jsonPlain)));
   console.log("--------------------------\n");
 
   const protobufResponse = await fetch(`${baseUrl}/protobuf`, {
@@ -49,11 +33,10 @@ async function main() {
   });
   console.log("Text Protobuf");
   console.log("--------------------------");
-  const buffer = await protobufResponse.arrayBuffer();
-  console.log("Transferred bytes", Buffer.byteLength(buffer));
-
-  const bufferByteLength = await compress(buffer);
-  console.log("Compressed bytes ", bufferByteLength);
+  const protobuf = await protobufResponse.arrayBuffer();
+  const protobufByteLength = Buffer.byteLength(protobuf);
+  console.log("Transferred bytes ", protobufByteLength);
+  console.log("Uncompressed bytes", Buffer.byteLength(gunzipSync(protobuf)));
   console.log("--------------------------\n");
 
   // Numbers
@@ -65,26 +48,21 @@ async function main() {
   });
   console.log("16-bit Number JSON");
   console.log("--------------------------");
-  console.log(
-    "Transferred bytes",
-    number16Response.headers.get("content-length")
-  );
-  const text16 = await number16Response.text();
-
-  const text16ByteLength = await compress(text16);
-  console.log("Compressed bytes ", text16ByteLength);
+  const number16 = await number16Response.arrayBuffer();
+  const number16ByteLength = Buffer.byteLength(number16);
+  console.log("Transferred bytes ", number16ByteLength);
+  console.log("Uncompressed bytes", Buffer.byteLength(gunzipSync(number16)));
   console.log("--------------------------\n");
 
   const protobuf16Response = await fetch(`${baseUrl}/protobuf-16`, {
     compress: false,
   });
-  console.log("16-bit Number Protobuf");
+  console.log("16-bit sint32 Protobuf");
   console.log("--------------------------");
   const buffer16 = await protobuf16Response.arrayBuffer();
-  console.log("Transferred bytes", Buffer.byteLength(buffer16));
-
-  const buffer16ByteLength = await compress(buffer16);
-  console.log("Compressed bytes ", buffer16ByteLength);
+  const buffer16ByteLength = Buffer.byteLength(buffer16);
+  console.log("Transferred bytes ", buffer16ByteLength);
+  console.log("Uncompressed bytes", Buffer.byteLength(gunzipSync(buffer16)));
   console.log("--------------------------\n");
 
   //// 32-bits
@@ -94,26 +72,21 @@ async function main() {
   });
   console.log("32-bit Number JSON");
   console.log("--------------------------");
-  console.log(
-    "Transferred bytes",
-    number32Response.headers.get("content-length")
-  );
-  const text32 = await number32Response.text();
-
-  const text32ByteLength = await compress(text32);
-  console.log("Compressed bytes ", text32ByteLength);
+  const number32 = await number32Response.arrayBuffer();
+  const number32ByteLength = Buffer.byteLength(number32);
+  console.log("Transferred bytes ", number32ByteLength);
+  console.log("Uncompressed bytes", Buffer.byteLength(gunzipSync(number32)));
   console.log("--------------------------\n");
 
   const protobuf32Response = await fetch(`${baseUrl}/protobuf-32`, {
     compress: false,
   });
-  console.log("32-bit Number Protobuf");
+  console.log("32-bit sint32 Protobuf");
   console.log("--------------------------");
   const buffer32 = await protobuf32Response.arrayBuffer();
-  console.log("Transferred bytes", Buffer.byteLength(buffer32));
-
-  const buffer32ByteLength = await compress(buffer32);
-  console.log("Compressed bytes ", buffer32ByteLength);
+  const buffer32ByteLength = Buffer.byteLength(buffer32);
+  console.log("Transferred bytes ", buffer32ByteLength);
+  console.log("Uncompressed bytes", Buffer.byteLength(gunzipSync(buffer32)));
   console.log("--------------------------\n");
 
   //// 53-bits
@@ -123,38 +96,35 @@ async function main() {
   });
   console.log("53-bit Number JSON");
   console.log("--------------------------");
-  console.log(
-    "Transferred bytes",
-    number53Response.headers.get("content-length")
-  );
-  const text53 = await number53Response.text();
-
-  const text53ByteLength = await compress(text53);
-  console.log("Compressed bytes ", text53ByteLength);
+  const number53 = await number53Response.arrayBuffer();
+  const number53ByteLength = Buffer.byteLength(number53);
+  console.log("Transferred bytes ", number53ByteLength);
+  console.log("Uncompressed bytes", Buffer.byteLength(gunzipSync(number53)));
   console.log("--------------------------\n");
 
   const protobuf53Response = await fetch(`${baseUrl}/protobuf-53`, {
     compress: false,
   });
-  console.log("53-bit Number Protobuf");
+  console.log("53-bit sint64 Protobuf");
   console.log("--------------------------");
   const buffer53 = await protobuf53Response.arrayBuffer();
-  console.log("Transferred bytes", Buffer.byteLength(buffer53));
-
-  const buffer53ByteLength = await compress(buffer53);
-  console.log("Compressed bytes ", buffer53ByteLength);
+  const buffer53ByteLength = Buffer.byteLength(buffer53);
+  console.log("Transferred bytes ", buffer53ByteLength);
+  console.log("Uncompressed bytes", Buffer.byteLength(gunzipSync(buffer53)));
   console.log("--------------------------\n");
 
   const protobufFootgunResponse = await fetch(`${baseUrl}/protobuf-footgun`, {
     compress: false,
   });
-  console.log("53-bit Number Footgun Protobuf");
+  console.log("53-bit int64 Footgun Protobuf");
   console.log("--------------------------");
   const bufferFootgun = await protobufFootgunResponse.arrayBuffer();
-  console.log("Transferred bytes", Buffer.byteLength(bufferFootgun));
-
-  const bufferFootgunByteLength = await compress(bufferFootgun);
-  console.log("Compressed bytes ", bufferFootgunByteLength);
+  const bufferFootgunByteLength = Buffer.byteLength(bufferFootgun);
+  console.log("Transferred bytes ", bufferFootgunByteLength);
+  console.log(
+    "Uncompressed bytes",
+    Buffer.byteLength(gunzipSync(bufferFootgun))
+  );
   console.log("--------------------------\n");
 
   // Results
@@ -162,39 +132,52 @@ async function main() {
   console.log(
     `Protobuf of utf-8 text was ${(
       100 -
-      (bufferByteLength / textByteLength) * 100
+      (protobufByteLength / jsonByteLength) * 100
     ).toFixed(2)} % smaller than JSON`
   );
   console.log(
     `Protobuf of utf-8 text was ${(
       100 -
-      (bufferByteLength / textPlainByteLength) * 100
+      (protobufByteLength / jsonPlainByteLength) * 100
     ).toFixed(2)} % smaller than JSON with plain object keys\n`
   );
   console.log(
     `Protobuf of 16-bit sint32 numbers was ${(
       100 -
-      (buffer16ByteLength / text16ByteLength) * 100
+      (buffer16ByteLength / number16ByteLength) * 100
     ).toFixed(2)} % smaller than JSON`
   );
   console.log(
     `Protobuf of 32-bit sint32 numbers was ${(
       100 -
-      (buffer32ByteLength / text32ByteLength) * 100
+      (buffer32ByteLength / number32ByteLength) * 100
     ).toFixed(2)} % smaller than JSON`
   );
   console.log(
     `Protobuf of 53-bit sint64 numbers was ${(
       100 -
-      (buffer53ByteLength / text53ByteLength) * 100
+      (buffer53ByteLength / number53ByteLength) * 100
     ).toFixed(2)} % smaller than JSON`
   );
   console.log(
     `Protobuf of 53-bit int64  numbers was ${(
       100 -
-      (bufferFootgunByteLength / text53ByteLength) * 100
+      (bufferFootgunByteLength / number53ByteLength) * 100
     ).toFixed(2)} % smaller than JSON\n`
   );
+
+  // Check that data can be decoded properly
+  const root = await protobufjs.load("test.proto").catch(console.error);
+  const TextMessage = root.lookupType("test.TextMessage");
+  const decodedPbText = TextMessage.toObject(
+    TextMessage.decode(gunzipSync(protobuf))
+  );
+
+  assert.deepEqual(
+    JSON.parse(gunzipSync(json).toString()).foo[0],
+    decodedPbText.foo[0]
+  );
+  console.log("Text JSON and protobuf have the same data");
 }
 
 main();
